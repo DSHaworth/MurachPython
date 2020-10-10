@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import pickle
 
-FILENAME = "ch07\\trips-binary.csv"
+FILENAME = "ch07\\trips.bin"
 
 def get_miles_driven():
     while True:
@@ -22,7 +22,7 @@ def get_gallons_used():
             continue
         
 def save_list(trip_list):
-    with open(FILENAME, "ab") as file:
+    with open(FILENAME, "wb") as file:
         pickle.dump(trip_list, file)
 
 def read_list():
@@ -38,13 +38,12 @@ def list_trips(trip_list):
 
 def main():    
 
-    trip_list = []
     # display a welcome message
     print("The Miles Per Gallon application")
     print()    
 
-    current_list = read_list()
-    list_trips(current_list)
+    trip_list = read_list()
+    list_trips(trip_list)
 
     more = "y"
     while more.lower() == "y":
