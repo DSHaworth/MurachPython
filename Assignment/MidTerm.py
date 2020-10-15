@@ -72,13 +72,17 @@ def main():
         if command == ENTER_PRODUCT:
             clear()
             print("Enter a product")
-            product = []
-            product.append(input("Name: "))
-            product.append(input("Code: "))
-            product.append(str(get_price("Price: ")))
-            writeToTextFile(FILE_NAME, product)
-            clear()
-            showMenu(f"{bcolors.SUCCESS}Record Added{bcolors.ENDC}")
+            try:
+                product = []
+                product.append(input("Name: "))
+                product.append(input("Code: "))
+                product.append(str(get_price("Price: ")))
+                writeToTextFile(FILE_NAME, product)
+                clear()
+                showMenu(f"{bcolors.SUCCESS}Record Added{bcolors.ENDC}")
+            except KeyboardInterrupt:
+                clear()
+                showMenu(f"{bcolors.WARNING}Aborted adding record{bcolors.ENDC}")
 
         elif command == DISPLAY_PRODUCTS:
 
