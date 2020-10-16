@@ -11,6 +11,9 @@ def clear():
 class bcolors:
     WARNING = '\033[31m'
     SUCCESS = '\033[92m'
+    INFO = '\033[96m'
+    PROMPT = '\033[92m'
+    MENU =  '\033[93m'
     ENDC = '\033[0m'
 
 def writeToTextFile(filepath, product_details):
@@ -25,10 +28,10 @@ def readListFromTextFile(filepath):
         raise Exception("Could not find " + filepath + " file.")
 
 def showMenu(msg = ""):
-    print("Inventory Program")
-    print("1) Enter a product")
-    print("2) Display all products")
-    print("3) Quit")
+    print(get_info("Inventory Program"))
+    print(get_menu("1) Enter a product"))
+    print(get_menu("2) Display all products"))
+    print(get_menu("3) Quit"))
     print(msg)
 
 def get_price(prompt):
@@ -38,24 +41,37 @@ def get_price(prompt):
             if number > 0:
                 return number
             else:
-                print("Price must be greater than 0.")
+                print(get_warning("Price must be greater than 0."))
         except ValueError:
-            clear()
-            showMenu()
-            print("You entered an invalid number")    
+            print(get_warning("You entered an invalid number"))
+
+def get_warning(text):
+    return f"{bcolors.WARNING}{text}{bcolors.ENDC}"
+
+def get_success(text):
+    return f"{bcolors.SUCCESS}{text}{bcolors.ENDC}"
+
+def get_info(text):
+    return f"{bcolors.INFO}{text}{bcolors.ENDC}"
+
+def get_prompt(text):
+    return f"{bcolors.PROMPT}{text}{bcolors.ENDC}"
+
+def get_menu(text):
+    return f"{bcolors.MENU}{text}{bcolors.ENDC}"
 
 def get_command(prompt, low, high):
     while True:
         try:
-            number = int(input(prompt))
+            number = int(input(get_prompt(prompt)))
             if number > low and number <= high:
                 return number
             else:
-                clear()
-                showMenu(f"{bcolors.WARNING}Entry must be greater than {str(low)}and less than or equal to {str(high)}.{bcolors.ENDC}")
+                clear()                
+                showMenu(get_warning(f"Entry must be greater than {str(low)}and less than or equal to {str(high)}."))
         except ValueError:
             clear()
-            showMenu(f"{bcolors.WARNING}You entered an invalid number{bcolors.ENDC}")
+            showMenu(get_warning("You entered an invalid number"))
 
 def main():
     ENTER_PRODUCT = 1
@@ -71,18 +87,18 @@ def main():
         print()     
         if command == ENTER_PRODUCT:
             clear()
-            print("Enter a product")
+            print(get_info("Enter a product"))
             try:
                 product = []
-                product.append(input("Name: "))
-                product.append(input("Code: "))
-                product.append(str(get_price("Price: ")))
+                product.append(input(get_prompt("Name: ")))
+                product.append(input(get_prompt("Code: ")))
+                product.append(str(get_price(get_prompt("Price: "))))
                 writeToTextFile(FILE_NAME, product)
                 clear()
-                showMenu(f"{bcolors.SUCCESS}Record Added{bcolors.ENDC}")
+                showMenu(get_success("Record Added"))
             except KeyboardInterrupt:
                 clear()
-                showMenu(f"{bcolors.WARNING}Aborted adding record{bcolors.ENDC}")
+                showMenu(get_warning("Aborted adding record"))
 
         elif command == DISPLAY_PRODUCTS:
 
@@ -95,11 +111,11 @@ def main():
                     print(str(i + 1) + ". " + list[i], end="")
                 print("-------------------")
                 print()
-                showMenu(f"{bcolors.SUCCESS}List above{bcolors.ENDC}")
+                showMenu(get_success("List above"))
 
-            except Exception as e:
+            except Exception as error:
                 clear()
-                showMenu(f"{bcolors.WARNING}{e}{bcolors.ENDC}")
+                showMenu(get_warning(error))
 
         elif command == QUIT:
             print("The program has ended")
