@@ -3,7 +3,7 @@
 import db
 from objects import Movie
 
-def display_welcome():
+def display_title():
     print("The Movie List program")
     print()    
     display_menu()
@@ -24,13 +24,6 @@ def display_categories():
         print(str(category.id) + ". " + category.name)
     print()
 
-def display_movies_by_category():
-    category_id = int(input("Category ID: "))
-    print()
-    category = db.get_category(category_id)
-    movies = db.get_movies_by_category(category_id)
-    display_movies(movies, category.name.upper())
-    
 def display_movies(movies, title_term):
     print("MOVIES - " + title_term)
     line_format = "{:3s} {:37s} {:6s} {:5s} {:10s}"
@@ -42,6 +35,16 @@ def display_movies(movies, title_term):
                                  movie.category.name))
     print()    
 
+def display_movies_by_category():
+    category_id = int(input("Category ID: "))
+    category = db.get_category(category_id)
+    if category == None:
+        print("There is no category with that ID.\n")
+    else:
+        print()
+        movies = db.get_movies_by_category(category_id)
+        display_movies(movies, category.name.upper())
+    
 def display_movies_by_year():
     year = int(input("Year: "))
     print()
@@ -55,10 +58,13 @@ def add_movie():
     category_id = int(input("Category ID: "))
     
     category = db.get_category(category_id)
-    movie = Movie(name=name, year=year, minutes=minutes,
-                  category=category)
-    db.add_movie(movie)    
-    print(name + " was added to database.\n")
+    if category == None:
+        print("There is no category with that ID. Movie NOT added.\n")
+    else:        
+        movie = Movie(name=name, year=year, minutes=minutes,
+                      category=category)
+        db.add_movie(movie)    
+        print(name + " was added to database.\n")
 
 def delete_movie():
     movie_id = int(input("Movie ID: "))
@@ -67,7 +73,7 @@ def delete_movie():
         
 def main():
     db.connect()
-    display_welcome()
+    display_title()
     display_categories()
     while True:        
         command = input("Command: ")

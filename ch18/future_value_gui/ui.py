@@ -11,11 +11,9 @@ class FutureValueFrame(ttk.Frame):
         ttk.Frame.__init__(self, parent, padding="10 10 10 10")
         self.parent = parent
         self.investment = Investment()
-
-        # Set locale
         result = locale.setlocale(locale.LC_ALL, '')
         if result == 'C':
-            locale.setlocale(locale.LC_ALL, 'en_US')
+            locale.setlocale(locale.LC_ALL, 'en_US')        
 
         # Define string variables for text entry fields
         self.monthlyInvestment = tk.StringVar()
