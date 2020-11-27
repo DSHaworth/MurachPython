@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<head>
+   <title>RPi Web Server</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <!-- Latest compiled and minified CSS - ->
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+   <!- - Optional theme - ->
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+   <!- - Latest compiled and minified JavaScript - ->
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+   -->
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   <script src="https://www.w3schools.com/lib/w3color.js"></script>
+   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+   <style>
+   .slider {
+     -webkit-appearance: none;
+     width: 100%;
+     height: 15px;
+     border-radius: 5px;
+     background: #d3d3d3;
+     outline: none;
+     opacity: 0.7;
+     -webkit-transition: .2s;
+     transition: opacity .2s;
+   }
+   
+   .slider:hover {opacity: 1;}
+   
+   .slider::-webkit-slider-thumb {
+     -webkit-appearance: none;
+     appearance: none;
+     width: 25px;
+     height: 25px;
+     border-radius: 50%;
+     cursor: pointer;
+   }
+   
+   .slider::-moz-range-thumb {
+     width: 25px;
+     height: 25px;
+     border-radius: 50%;
+     background: #4CAF50;
+     cursor: pointer;
+   }
+   #redSlider::-webkit-slider-thumb {background: red;}
+   #redSlider::-moz-range-thumb {background: red;}
+   #greenSlider::-webkit-slider-thumb {background: green;}
+   #greenSlider::-moz-range-thumb {background: green;}
+   #blueSlider::-webkit-slider-thumb {background: blue;}
+   #blueSlider::-moz-range-thumb {background: blue;}
+   </style>
+
+
+</head>
+
+<body>
+
+    <div class="w3-container">
+        <h1>RGB Color</h1>
+        <div class="w3-cell-row">
+        <div class="w3-container w3-cell w3-mobile">
+        <p><input type="range" min="0" max="255" value="0" class="slider" id="redSlider"></p>
+        <p><input type="range" min="0" max="255" value="0" class="slider" id="greenSlider"></p>
+        <p><input type="range" min="0" max="255" value="0" class="slider" id="blueSlider"></p>
+        </div>
+        <div class="w3-container w3-cell w3-mobile" style="background-color:black" id="colorShow">
+        <div></div>
+        </div>
+        </div>
+        <p>Or pick a color: <input type="color" id="pickColor"></p>
+    </div>
+
+    <!--
+   <h1>RPi Web Server</h1>
+   {% for pin in pins %}
+   <h2>{{ pins[pin].name }}
+   {% if pins[pin].state == true %}
+      is currently <strong>on</strong></h2><div class="row"><div class="col-md-2">
+      <a href="/{{pin}}/off" class="btn btn-block btn-lg btn-default" role="button">Turn off</a></div></div>
+   {% else %}
+      is currently <strong>off</strong></h2><div class="row"><div class="col-md-2">
+      <a href="/{{pin}}/on" class="btn btn-block btn-lg btn-primary" role="button">Turn on</a></div></div>
+   {% endif %}
+   {% endfor %}
+-->   
+
+<script>
+   var rgb = w3color("rgb(0,0,0)"); //we use the w3color.js library to keep the color as an object
+   window.addEventListener("load", function(){ //when page loads
+      var rSlider = document.getElementById("redSlider");
+      var gSlider = document.getElementById("greenSlider");
+      var bSlider = document.getElementById("blueSlider");
+
+      rSlider.addEventListener("change", function() { //add event listener for when red slider changes
+         rgb.red = this.value; //update the RED color according to the slider
+         colorShow.style.backgroundColor = rgb.toRgbString(); //update the "Current color"
+         emit("rgbLED", rgb); //send the updated color to RGB LED via WebSocket
+      });
+      gSlider.addEventListener("change", function() { //add event listener for when green slider changes
+         rgb.green = this.value; //update the GREEN color according to the slider
+         colorShow.style.backgroundColor = rgb.toRgbString(); //update the "Current color"
+         emit("rgbLED", rgb); //send the updated color to RGB LED via WebSocket
+      });
+      bSlider.addEventListener("change", function() { //add event listener for when blue slider changes
+         rgb.blue = this.value;  //update the BLUE color according to the slider
+         colorShow.style.backgroundColor = rgb.toRgbString(); //update the "Current color"
+         emit("rgbLED", rgb); //send the updated color to RGB LED via WebSocket
+      });
+   });
+
+   function emit(target, rgb){
+      console.log(rgb);
+
+      $.ajax({
+         'url': target,
+         'method': 'POST',
+         'data': JSON.stringify(rgb),
+         'contentType': 'application/json',
+         'success': function(data, status){
+            console.log("Data: " + data + "\nStatus: " + status);
+         },
+         'error': function(err){
+            console.log(err);
+         }
+      });
+   }
+
+</script>
+</body>
+</html>
